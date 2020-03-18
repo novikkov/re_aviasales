@@ -4,28 +4,58 @@ const formSearch = document.querySelector('.form-search'),
     inputCitiesTo = document.querySelector('.input__cities-to'),
     dropdownCititesTo = document.querySelector('.dropdown__cities-to');
 
-const city = ['Москва', 'Санкт-Петербург', 'Минск', 'Караганда', 'Челябинск', 'Керч',
-    'Волгоград', 'Самара', 'Днепропетровск', 'Екатеринбург', 'Одесса', 'Ухань', 'Шымкен',
-    'Нижний Новгород', 'Калининград', 'Ростов-на-Дону'];
+const citiesApi = 'dataBase/airports.json',
+    proxy = 'https://cors-anywhere.herokuapp.com/',
+    TOKEN = '0b2fd82ae69de9d16f0677c10ac606fe',
+    calendar = 'http://min-prices.aviasales.ru/calendar_preload';
+
+let city = [];
+
+// функции
+
+const getData = (url, callBack)=> {
+    const request = new XMLHttpRequest();
+
+    request.open('GET', url);
+
+    request.addEventListener('readystatechange', ()=>{
+        if(request.status === 200){
+            callBack(request.response);
+        } else {
+            console.error(request.status);
+        }
+    });
+
+    request.send();
+}
 
 const showCity = (input, list)=> {
     list.textContent = '';
 
     if(input.value === '') return;
 
-        const filterCity = city.filter((item) => {
-            const fixItem = item.toLowerCase();
+        const filterCity = city.filter((item) => {   
+            const fixItem = item.name.toLowerCase();
             return fixItem.includes(input.value.toLowerCase());
         });
         
         filterCity.forEach((item)=> {
             const li = document.createElement('li');
             li.classList.add('dropdown__city');
-            li.textContent = item;
+            li.textContent = item.name;
             list.append(li);
         });
 };
 
+const selectCity = (event, input, list) =>{
+    const target = event.target;
+    if(target.tagName.toLowerCase() === 'li'){
+        input.value = target.textContent;
+        list.textContent = '';
+    }
+}
+
+// обработчики
 inputCitiesFrom.addEventListener('input', () =>{
     showCity(inputCitiesFrom, dropdownCititesFrom);
 });
@@ -35,17 +65,15 @@ inputCitiesTo.addEventListener('input', () =>{
 });
 
 dropdownCititesFrom.addEventListener('click', (event)=>{
-    const target = event.target;
-    if(target.tagName.toLowerCase() === 'li'){
-        inputCitiesFrom.value = target.textContent;
-        dropdownCititesFrom.textContent = '';
-    }
+    selectCity(event, inputCitiesFrom, dropdownCititesFrom);
 });
 
 dropdownCititesTo.addEventListener('click', (event)=>{
-    const target = event.target;
-    if(target.tagName.toLowerCase() === 'li'){
-        inputCitiesTo.value = target.textContent;
-        dropdownCititesTo.textContent = '';
-    }
+    selectCity(event, inputCitiesTo, dropdownCititesTo);
+});
+
+// вызоды
+
+getData(citiesApi, (data) => {
+    city = JSON.parse(data).filter(item => item.name );
 });
