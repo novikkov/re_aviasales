@@ -1,2 +1,2 @@
-# reAviasales [novikkov.github.io/re_aviasales]
-## v0.0.1
+# reAviasales [https://github.com/novikkov/re_aviasales]
+## v0.0.2
