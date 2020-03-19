@@ -1,5 +1,5 @@
 # reAviasales [https://novikkov.github.io/re_aviasales/]
 
-## v0.0.2
+## v0.0.3
 
 
